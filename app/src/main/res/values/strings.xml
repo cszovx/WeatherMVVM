@@ -9,4 +9,11 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <string name="weather_forecast">天气预报</string>
+    <string name="weather_forecast_data">日期</string>
+    <string name="weather_forecast_weather">天气</string>
+    <string name="weather_forecast_min">最低温度</string>
+    <string name="weather_forecast_max">最高温度</string>
+
 </resources>
