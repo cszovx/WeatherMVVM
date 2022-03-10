@@ -106,7 +106,7 @@ public class WeatherShowFragment extends BaseFragment<FragmentWeathershowBinding
                                         TextView maxText = (TextView) view.findViewById(R.id.max_text);
                                         TextView minText = (TextView) view.findViewById(R.id.min_text);
                                         dateText.setText(forecast.fxDate);
-                                        infoText.setText(forecast.iconDay);
+                                        infoText.setText(forecast.textDay);
                                         maxText.setText(forecast.tempMin + "℃");
                                         minText.setText(forecast.tempMax + "℃");
                                         forecastLayout.addView(view);
