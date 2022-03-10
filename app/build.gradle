@@ -13,6 +13,13 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation":
+                                     "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     buildTypes {
@@ -34,6 +41,11 @@ android {
 }
 
 dependencies {
+    implementation "androidx.room:room-runtime:+"
+    annotationProcessor "androidx.room:room-compiler:+"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:+"
+    implementation 'io.reactivex.rxjava3:rxandroid:+'
+    implementation "io.reactivex.rxjava3:rxjava:+"
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
     implementation 'com.squareup.okhttp3:okhttp:3.3.1'
     implementation 'com.squareup.retrofit2:retrofit:2.1.0'

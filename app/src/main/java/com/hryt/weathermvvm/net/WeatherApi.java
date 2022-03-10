@@ -3,10 +3,12 @@ package com.hryt.weathermvvm.net;
 import com.hryt.weathermvvm.bean.WeatherBean;
 import com.hryt.weathermvvm.constants.WeatherConstants;
 
-import okhttp3.ResponseBody;
+import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.QueryMap;
 
 /**
  * author : SizheChen
@@ -16,6 +18,6 @@ import retrofit2.http.Path;
  * version: 1.0
  */
 public interface WeatherApi {
-    @GET("v7/weather/3d?location={location}&key="+ WeatherConstants.KEY)
-    Call<WeatherBean> getWeatherInfo(@Path("location") int location);
+    @GET("v7/weather/7d")
+    Call<WeatherBean> getWeatherInfo(@QueryMap Map<String, String> location);
 }

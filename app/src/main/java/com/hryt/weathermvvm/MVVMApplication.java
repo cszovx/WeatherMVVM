@@ -1,12 +1,8 @@
 package com.hryt.weathermvvm;
 
 import android.app.Application;
-import android.content.Context;
-import android.util.Log;
 
 import com.hryt.weathermvvm.manager.WeatherAppManager;
-
-import java.io.File;
 
 /**
  * author : SizheChen
@@ -16,7 +12,7 @@ import java.io.File;
  * version: 1.0
  */
 public class MVVMApplication extends Application {
-    private Context mContext;
+
     @Override
     public void onCreate() {
         super.onCreate();

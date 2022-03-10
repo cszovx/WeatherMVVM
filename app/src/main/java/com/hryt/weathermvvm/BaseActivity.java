@@ -21,10 +21,11 @@ public abstract class BaseActivity<B extends ViewDataBinding, VM extends ViewMod
     protected VM viewModel;
     protected B binding;
     private Activity activity = setActivity();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(activity,getLayoutId());
+        binding = DataBindingUtil.setContentView(activity, getLayoutId());
         init();
     }
 
