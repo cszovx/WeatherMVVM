@@ -1,12 +1,7 @@
 package com.hryt.weathermvvm.models.weather.fragment;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.core.view.GravityCompat;
+
+import com.bumptech.glide.Glide;
 import com.hryt.weathermvvm.MainActivity;
 import com.hryt.weathermvvm.R;
 import com.hryt.weathermvvm.bean.Daily;
@@ -25,8 +22,6 @@ import com.hryt.weathermvvm.models.base.BaseFragment;
 import com.hryt.weathermvvm.models.china.fragment.ChooseAreaFragment;
 import com.hryt.weathermvvm.models.weather.viewmodel.WeatherShowViewModel;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,6 +65,7 @@ public class WeatherShowFragment extends BaseFragment<FragmentWeathershowBinding
     }
     @Override
     protected void init() {
+        updateBackgroundPic();
         updateWeather();
         binding.navButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +76,7 @@ public class WeatherShowFragment extends BaseFragment<FragmentWeathershowBinding
         });
         binding.swipeRefresh.setOnRefreshListener(() -> {
             binding.swipeRefresh.setRefreshing(true);
+            updateBackgroundPic();
             Observable
                     .just(true)
                     .map(isRefresh -> {
@@ -141,5 +138,10 @@ public class WeatherShowFragment extends BaseFragment<FragmentWeathershowBinding
         ApplicationInfo appInfo = mainActivity.getApplicationInfo();
         int resID = mainActivity.getResources().getIdentifier(name, "drawable",appInfo.packageName);
         return resID;
+    }
+
+    private void updateBackgroundPic(){
+        Glide.with(this).load("https://scpic.chinaz.net/files/pic/pic7/xpic348.jpg").into(binding.bingPicImg);
+
     }
 }

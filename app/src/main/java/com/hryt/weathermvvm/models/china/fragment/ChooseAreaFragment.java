@@ -1,12 +1,14 @@
 package com.hryt.weathermvvm.models.china.fragment;
 
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.bumptech.glide.Glide;
 import com.hryt.weathermvvm.MainActivity;
 import com.hryt.weathermvvm.R;
 import com.hryt.weathermvvm.bean.Area;
@@ -20,6 +22,8 @@ import com.hryt.weathermvvm.models.base.BaseFragment;
 import com.hryt.weathermvvm.models.china.viewmodel.ChooseAreaViewModel;
 import com.hryt.weathermvvm.models.weather.fragment.WeatherShowFragment;
 import com.hryt.weathermvvm.net.AreaApi;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,6 +103,28 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
     protected void init() {
         currentLevel = 0;
         listView = binding.listView;
+        binding.backButton.setVisibility(View.INVISIBLE);
+        binding.backButton.setOnClickListener(view -> {
+            if (currentLevel == 1) {
+                currentLevel = 0;
+                dataList.clear();
+                for (Province p : provinceList) {
+                    dataList.add(p.getProvinceName());
+                }
+                adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
+                listView.setAdapter(adapter);
+                binding.backButton.setVisibility(View.INVISIBLE);
+            }
+            if (currentLevel == 2) {
+                currentLevel = 1;
+                dataList.clear();
+                for (City c : cityList) {
+                    dataList.add(c.getCityName());
+                }
+                adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
+                listView.setAdapter(adapter);
+            }
+        });
         mAreaApi.getProvince().enqueue(new Callback<ArrayList<Area>>() {
             @Override
             public void onResponse(Call<ArrayList<Area>> call, Response<ArrayList<Area>> response) {
@@ -130,6 +156,7 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                                                 selectedProvince = provinceList.get(position);
                                                 updateCityDatabase(selectedProvince);
                                                 currentLevel = LEVEL_CITY;
+                                                binding.backButton.setVisibility(View.VISIBLE);
                                             } else if (currentLevel == LEVEL_CITY) {
                                                 selectedCity = cityList.get(position);
                                                 updateCountryDatabase(selectedCity);
