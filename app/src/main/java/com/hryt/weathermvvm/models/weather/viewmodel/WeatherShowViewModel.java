@@ -1,6 +1,6 @@
 package com.hryt.weathermvvm.models.weather.viewmodel;
 
-import androidx.lifecycle.ViewModel;
+import com.hryt.weathermvvm.models.base.BaseViewModel;
 
 /**
  * author : SizheChen
@@ -9,5 +9,5 @@ import androidx.lifecycle.ViewModel;
  * desc   : This is WeatherShowViewModel
  * version: 1.0
  */
-public class WeatherShowViewModel extends ViewModel {
+public class WeatherShowViewModel extends BaseViewModel {
 }

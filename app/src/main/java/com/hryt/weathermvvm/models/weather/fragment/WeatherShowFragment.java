@@ -1,9 +1,16 @@
 package com.hryt.weathermvvm.models.weather.fragment;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.core.view.GravityCompat;
@@ -12,13 +19,14 @@ import com.hryt.weathermvvm.R;
 import com.hryt.weathermvvm.bean.Daily;
 import com.hryt.weathermvvm.bean.WeatherBean;
 import com.hryt.weathermvvm.constants.WeatherConstants;
-import com.hryt.weathermvvm.database.bean.County;
 import com.hryt.weathermvvm.databinding.FragmentWeathershowBinding;
 import com.hryt.weathermvvm.manager.WeatherAppManager;
 import com.hryt.weathermvvm.models.base.BaseFragment;
 import com.hryt.weathermvvm.models.china.fragment.ChooseAreaFragment;
 import com.hryt.weathermvvm.models.weather.viewmodel.WeatherShowViewModel;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +64,9 @@ public class WeatherShowFragment extends BaseFragment<FragmentWeathershowBinding
         map.put("location", WeatherAppManager.getInstance().getWeatherStatus().getWeatherId());
         map.put("key", WeatherConstants.KEY);
         this.mainActivity = mainActivity;
+        if (this.mainActivity == null) {
+            this.mainActivity = new MainActivity();
+        }
     }
     @Override
     protected void init() {
@@ -102,11 +113,11 @@ public class WeatherShowFragment extends BaseFragment<FragmentWeathershowBinding
                                         View view = LayoutInflater.from(WeatherAppManager.getInstance()
                                                 .getContext()).inflate(R.layout.forecast_item, forecastLayout, false);
                                         TextView dateText = (TextView) view.findViewById(R.id.date_text);
-                                        TextView infoText = (TextView) view.findViewById(R.id.info_text);
+                                        ImageView infoText = (ImageView) view.findViewById(R.id.info_text);
                                         TextView maxText = (TextView) view.findViewById(R.id.max_text);
                                         TextView minText = (TextView) view.findViewById(R.id.min_text);
                                         dateText.setText(forecast.fxDate);
-                                        infoText.setText(forecast.textDay);
+                                        infoText.setBackgroundResource(getRes("icon_" + forecast.iconDay));
                                         maxText.setText(forecast.tempMin + "℃");
                                         minText.setText(forecast.tempMax + "℃");
                                         forecastLayout.addView(view);
@@ -124,5 +135,11 @@ public class WeatherShowFragment extends BaseFragment<FragmentWeathershowBinding
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_weathershow;
+    }
+
+    public int getRes(String name) {
+        ApplicationInfo appInfo = mainActivity.getApplicationInfo();
+        int resID = mainActivity.getResources().getIdentifier(name, "drawable",appInfo.packageName);
+        return resID;
     }
 }
