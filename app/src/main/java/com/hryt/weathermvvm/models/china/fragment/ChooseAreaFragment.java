@@ -1,14 +1,10 @@
 package com.hryt.weathermvvm.models.china.fragment;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-import com.bumptech.glide.Glide;
 import com.hryt.weathermvvm.MainActivity;
 import com.hryt.weathermvvm.R;
 import com.hryt.weathermvvm.bean.Area;
@@ -23,7 +19,6 @@ import com.hryt.weathermvvm.models.china.viewmodel.ChooseAreaViewModel;
 import com.hryt.weathermvvm.models.weather.fragment.WeatherShowFragment;
 import com.hryt.weathermvvm.net.AreaApi;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,6 +96,9 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
 
     @Override
     protected void init() {
+        binding.setViewModel(viewModel);
+        binding.getViewModel().name.setValue("中国");
+        Log.d(TAG + "MAIN",Thread.currentThread().getId() + binding.getViewModel().name.getValue());
         currentLevel = 0;
         listView = binding.listView;
         binding.backButton.setVisibility(View.INVISIBLE);
@@ -114,6 +112,8 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                 adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
                 listView.setAdapter(adapter);
                 binding.backButton.setVisibility(View.INVISIBLE);
+                binding.getViewModel().name.setValue("中国");
+                Log.d(TAG + "BACK",Thread.currentThread().getId() + binding.getViewModel().name.getValue());
             }
             if (currentLevel == 2) {
                 currentLevel = 1;
@@ -123,6 +123,8 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                 }
                 adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
                 listView.setAdapter(adapter);
+                binding.getViewModel().name.setValue(selectedProvince.getProvinceName());
+                Log.d(TAG + "BACK",Thread.currentThread().getId() + binding.getViewModel().name.getValue());
             }
         });
         mAreaApi.getProvince().enqueue(new Callback<ArrayList<Area>>() {
@@ -209,6 +211,7 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                                     selectedProvince = provinceList.get(position);
                                     updateCityDatabase(selectedProvince);
                                     currentLevel = LEVEL_CITY;
+                                    viewModel.name.setValue(selectedProvince.getProvinceName());
                                     binding.backButton.setVisibility(View.VISIBLE);
                                 } else if (currentLevel == LEVEL_CITY) {
                                     selectedCity = cityList.get(position);
@@ -225,8 +228,6 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                         });
                     }
                 }, error -> Log.e(TAG, error + ""));
-
-
     }
 
     private void updateCityDatabase(Province province){

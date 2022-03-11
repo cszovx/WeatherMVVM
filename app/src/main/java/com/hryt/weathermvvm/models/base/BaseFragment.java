@@ -64,7 +64,7 @@ public abstract class BaseFragment<B extends ViewDataBinding, VM extends BaseVie
             ParameterizedType paramType = (ParameterizedType) targetClass.getGenericSuperclass();
             Type[] typeArguments = paramType.getActualTypeArguments();
             for (Type type : typeArguments) {
-                if (type instanceof Class && ViewModel.class.isAssignableFrom((Class<?>) type)) {
+                if (type instanceof Class && BaseViewModel.class.isAssignableFrom((Class<?>) type)) {
                     return (Class<VM>) type;
                 }
             }

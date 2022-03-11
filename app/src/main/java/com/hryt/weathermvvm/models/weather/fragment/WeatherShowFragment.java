@@ -63,6 +63,7 @@ public class WeatherShowFragment extends BaseFragment<FragmentWeathershowBinding
             this.mainActivity = new MainActivity();
         }
     }
+
     @Override
     protected void init() {
         updateBackgroundPic();

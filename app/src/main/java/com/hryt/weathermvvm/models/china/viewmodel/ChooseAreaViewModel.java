@@ -1,6 +1,7 @@
 package com.hryt.weathermvvm.models.china.viewmodel;
 
 import com.hryt.weathermvvm.models.base.BaseViewModel;
+import com.hryt.weathermvvm.models.base.CommonLiveData;
 
 /**
  * author : SizheChen
@@ -10,4 +11,5 @@ import com.hryt.weathermvvm.models.base.BaseViewModel;
  * version: 1.0
  */
 public class ChooseAreaViewModel extends BaseViewModel {
+    public CommonLiveData<String> name = new CommonLiveData<>("");
 }
