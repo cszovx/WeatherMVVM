@@ -131,6 +131,9 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                 Observable.just(response.body())
                         .map(areas -> {
                             List<Province> provinces = new ArrayList<>();
+                            if(mWeatherDao.queryProvinces() != null && mWeatherDao.queryProvinces().size() != 0) {
+                                return provinces;
+                            }
                             for (Area area : areas) {
                                 Province province = new Province(area.name, area.id);
                                 provinces.add(province);
@@ -142,6 +145,9 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 isUpdate -> {
+                                    if (isUpdate.size() == 0 || isUpdate == null){
+                                        return;
+                                    }
                                     provinceList = isUpdate;
                                     dataList.clear();
                                     for (Province p : isUpdate) {
@@ -203,11 +209,17 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                                     selectedProvince = provinceList.get(position);
                                     updateCityDatabase(selectedProvince);
                                     currentLevel = LEVEL_CITY;
+                                    binding.backButton.setVisibility(View.VISIBLE);
                                 } else if (currentLevel == LEVEL_CITY) {
                                     selectedCity = cityList.get(position);
                                     updateCountryDatabase(selectedCity);
                                     currentLevel = LEVEL_COUNTY;
                                 } else if (currentLevel == LEVEL_COUNTY) {
+                                    County county = countyList.get(position);
+                                    WeatherAppManager.getInstance().getWeatherStatus().setWeatherId(county.getWeatherId());
+                                    WeatherAppManager.getInstance().getWeatherStatus().setName(county.getCountyName());
+                                    WeatherAppManager.getInstance().getWeatherStatus().setCityId(county.getCityId());
+                                    mainActivity.updateFragment(R.id.item_weather, new WeatherShowFragment(mainActivity));
                                 }
                             }
                         });
