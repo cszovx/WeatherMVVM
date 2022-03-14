@@ -97,8 +97,8 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
     @Override
     protected void init() {
         binding.setViewModel(viewModel);
-        binding.getViewModel().name.setValue("中国");
-        Log.d(TAG + "MAIN",Thread.currentThread().getId() + binding.getViewModel().name.getValue());
+        binding.getViewModel().name.set("中国");
+        Log.d(TAG + "MAIN",Thread.currentThread().getId() + binding.getViewModel().name.get());
         currentLevel = 0;
         listView = binding.listView;
         binding.backButton.setVisibility(View.INVISIBLE);
@@ -112,8 +112,8 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                 adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
                 listView.setAdapter(adapter);
                 binding.backButton.setVisibility(View.INVISIBLE);
-                binding.getViewModel().name.setValue("中国");
-                Log.d(TAG + "BACK",Thread.currentThread().getId() + binding.getViewModel().name.getValue());
+                binding.getViewModel().name.set("中国");
+                Log.d(TAG + "BACK",Thread.currentThread().getId() + binding.getViewModel().name.get());
             }
             if (currentLevel == 2) {
                 currentLevel = 1;
@@ -123,8 +123,8 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                 }
                 adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
                 listView.setAdapter(adapter);
-                binding.getViewModel().name.setValue(selectedProvince.getProvinceName());
-                Log.d(TAG + "BACK",Thread.currentThread().getId() + binding.getViewModel().name.getValue());
+                binding.getViewModel().name.set(selectedProvince.getProvinceName());
+                Log.d(TAG + "BACK",Thread.currentThread().getId() + binding.getViewModel().name.get());
             }
         });
         mAreaApi.getProvince().enqueue(new Callback<ArrayList<Area>>() {
@@ -164,17 +164,24 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                                                 selectedProvince = provinceList.get(position);
                                                 updateCityDatabase(selectedProvince);
                                                 currentLevel = LEVEL_CITY;
+                                                viewModel.name.set(selectedProvince.getProvinceName());
                                                 binding.backButton.setVisibility(View.VISIBLE);
-                                            } else if (currentLevel == LEVEL_CITY) {
+                                                return;
+                                            }
+                                            if (currentLevel == LEVEL_CITY) {
                                                 selectedCity = cityList.get(position);
                                                 updateCountryDatabase(selectedCity);
                                                 currentLevel = LEVEL_COUNTY;
-                                            } else if (currentLevel == LEVEL_COUNTY) {
+                                                viewModel.name.set(selectedCity.getCityName());
+                                                return;
+                                            }
+                                            if (currentLevel == LEVEL_COUNTY) {
                                                 County county = countyList.get(position);
                                                 WeatherAppManager.getInstance().getWeatherStatus().setWeatherId(county.getWeatherId());
                                                 WeatherAppManager.getInstance().getWeatherStatus().setName(county.getCountyName());
                                                 WeatherAppManager.getInstance().getWeatherStatus().setCityId(county.getCityId());
                                                 mainActivity.updateFragment(R.id.item_weather, new WeatherShowFragment(mainActivity));
+                                                return;
                                             }
                                         }
                                     });
@@ -211,19 +218,24 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                                     selectedProvince = provinceList.get(position);
                                     updateCityDatabase(selectedProvince);
                                     currentLevel = LEVEL_CITY;
-                                    viewModel.name.setValue(selectedProvince.getProvinceName());
+                                    viewModel.name.set(selectedProvince.getProvinceName());
                                     binding.backButton.setVisibility(View.VISIBLE);
-                                } else if (currentLevel == LEVEL_CITY) {
+                                    return;
+                                }
+                                if (currentLevel == LEVEL_CITY) {
                                     selectedCity = cityList.get(position);
                                     updateCountryDatabase(selectedCity);
                                     currentLevel = LEVEL_COUNTY;
-                                } else if (currentLevel == LEVEL_COUNTY) {
+                                    viewModel.name.set(selectedCity.getCityName());
+                                    return;
+                                }
+                                if (currentLevel == LEVEL_COUNTY) {
                                     County county = countyList.get(position);
                                     WeatherAppManager.getInstance().getWeatherStatus().setWeatherId(county.getWeatherId());
                                     WeatherAppManager.getInstance().getWeatherStatus().setName(county.getCountyName());
                                     WeatherAppManager.getInstance().getWeatherStatus().setCityId(county.getCityId());
                                     mainActivity.updateFragment(R.id.item_weather, new WeatherShowFragment(mainActivity));
-                                }
+                                    return;}
                             }
                         });
                     }

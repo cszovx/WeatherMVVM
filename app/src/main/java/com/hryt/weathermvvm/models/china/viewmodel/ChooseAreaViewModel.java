@@ -1,5 +1,7 @@
 package com.hryt.weathermvvm.models.china.viewmodel;
 
+import androidx.databinding.ObservableField;
+
 import com.hryt.weathermvvm.models.base.BaseViewModel;
 import com.hryt.weathermvvm.models.base.CommonLiveData;
 
@@ -11,5 +13,5 @@ import com.hryt.weathermvvm.models.base.CommonLiveData;
  * version: 1.0
  */
 public class ChooseAreaViewModel extends BaseViewModel {
-    public CommonLiveData<String> name = new CommonLiveData<>("");
+    public ObservableField<String> name = new ObservableField<>("");
 }
