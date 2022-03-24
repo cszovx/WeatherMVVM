@@ -5,40 +5,58 @@
         <variable
             name="viewModel"
             type="com.hryt.weathermvvm.models.china.viewmodel.ChooseAreaViewModel" />
+        <variable
+            name="onClick"
+            type="com.hryt.weathermvvm.models.china.fragment.ChooseAreaFragment.ClickProxy" />
     </data>
-    <LinearLayout
-        android:orientation="vertical"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#fff"
-        android:fitsSystemWindows="true">
-
-        <RelativeLayout
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:fitsSystemWindows="true">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:textColor="#000000"
-                android:text="@{viewModel.name}"
-                android:textSize="20sp" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize">
 
-            <Button
-                android:id="@+id/back_button"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
-                android:background="@drawable/ic_back" />
-        </RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textColor="#000000"
+                    android:text="@{viewModel.name}"
+                    android:textSize="20sp" />
 
-        <ListView
-            android:id="@+id/list_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+                <Button
+                    android:id="@+id/back_button"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:visibility="@{viewModel.visibilityBtn}"
+                    android:onClick="@{v -> onClick.search()}"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/ic_back" />
+            </RelativeLayout>
 
-    </LinearLayout>
+            <ListView
+                android:id="@+id/list_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adapter="@{viewModel.adapter}"/>
+
+        </LinearLayout>
+        <ProgressBar
+            android:layout_gravity="center"
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            />
+    </FrameLayout>
 </layout>

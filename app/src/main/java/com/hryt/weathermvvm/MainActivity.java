@@ -21,7 +21,9 @@ import com.hryt.weathermvvm.models.weather.fragment.WeatherShowFragment;
  * version: 1.0
  */
 public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivityViewModel> {
-
+    public WeatherShowFragment weatherShowFragment;
+    public WeatherShowFragment weatherShowFragments;
+    private boolean isChoose = true;
     @Override
     protected int getLayoutId() {
         return R.layout.activity_main;
@@ -47,7 +49,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         WeatherAppManager.getInstance().getWeatherStatus().setWeatherId(data.getString("weatherId", "101010100"));
         WeatherAppManager.getInstance().getWeatherStatus().setName(data.getString("name", "北京"));
         WeatherAppManager.getInstance().getWeatherStatus().setCityId(data.getInt("cityId", 1));
-        updateFragment(binding.itemWeather.getId(), new WeatherShowFragment(this));
+        weatherShowFragment = new WeatherShowFragment(this);
+        weatherShowFragments = new WeatherShowFragment(this);
+        updateFragment(binding.itemWeather.getId(), weatherShowFragment);
     }
 
     public void updateFragment(int id, Fragment fragment){
@@ -55,6 +59,21 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainActivity
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(id, fragment);
 //        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    public void updateFragment(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        if (isChoose) {
+            weatherShowFragments = new WeatherShowFragment(this);
+            fragmentTransaction.replace(binding.itemWeather.getId(),weatherShowFragments);
+            isChoose = false;
+        } else {
+            weatherShowFragment = new WeatherShowFragment(this);
+            fragmentTransaction.replace(binding.itemWeather.getId(),weatherShowFragment);
+            isChoose = true;
+        }
         fragmentTransaction.commit();
     }
 

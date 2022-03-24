@@ -42,6 +42,7 @@ import retrofit2.Response;
 public class WeatherShowFragment extends BaseFragment<FragmentWeathershowBinding, WeatherShowViewModel> {
 
     private MainActivity mainActivity;
+    private ChooseAreaFragment fragment;
     Map<String, String> map = new HashMap<>();
     public WeatherShowFragment (MainActivity mainActivity){
         Observable.just(true)
@@ -62,6 +63,7 @@ public class WeatherShowFragment extends BaseFragment<FragmentWeathershowBinding
         if (this.mainActivity == null) {
             this.mainActivity = new MainActivity();
         }
+        fragment = new ChooseAreaFragment(mainActivity);
     }
 
     @Override
@@ -71,7 +73,7 @@ public class WeatherShowFragment extends BaseFragment<FragmentWeathershowBinding
         binding.navButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mainActivity.updateFragment(R.id.fragment_choose, new ChooseAreaFragment(mainActivity));
+                mainActivity.updateFragment(R.id.fragment_choose, fragment);
                 binding.drawerLayout.openDrawer(GravityCompat.START);
             }
         });

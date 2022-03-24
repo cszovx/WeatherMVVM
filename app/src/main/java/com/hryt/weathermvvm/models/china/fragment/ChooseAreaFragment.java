@@ -2,7 +2,6 @@ package com.hryt.weathermvvm.models.china.fragment;
 
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.hryt.weathermvvm.MainActivity;
@@ -16,7 +15,6 @@ import com.hryt.weathermvvm.databinding.FragmentChooseareaBinding;
 import com.hryt.weathermvvm.manager.WeatherAppManager;
 import com.hryt.weathermvvm.models.base.BaseFragment;
 import com.hryt.weathermvvm.models.china.viewmodel.ChooseAreaViewModel;
-import com.hryt.weathermvvm.models.weather.fragment.WeatherShowFragment;
 import com.hryt.weathermvvm.net.AreaApi;
 
 import java.util.ArrayList;
@@ -97,36 +95,13 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
     @Override
     protected void init() {
         binding.setViewModel(viewModel);
-        binding.getViewModel().name.set("中国");
-        Log.d(TAG + "MAIN",Thread.currentThread().getId() + binding.getViewModel().name.get());
+//        binding.setLifecycleOwner(this);
+        binding.setOnClick(new ClickProxy());
+        viewModel.name.setValue("中国");
+        Log.d(TAG + "MAIN",Thread.currentThread().getId() + viewModel.name.getValue());
         currentLevel = 0;
         listView = binding.listView;
-        binding.backButton.setVisibility(View.INVISIBLE);
-        binding.backButton.setOnClickListener(view -> {
-            if (currentLevel == 1) {
-                currentLevel = 0;
-                dataList.clear();
-                for (Province p : provinceList) {
-                    dataList.add(p.getProvinceName());
-                }
-                adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
-                listView.setAdapter(adapter);
-                binding.backButton.setVisibility(View.INVISIBLE);
-                binding.getViewModel().name.set("中国");
-                Log.d(TAG + "BACK",Thread.currentThread().getId() + binding.getViewModel().name.get());
-            }
-            if (currentLevel == 2) {
-                currentLevel = 1;
-                dataList.clear();
-                for (City c : cityList) {
-                    dataList.add(c.getCityName());
-                }
-                adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
-                listView.setAdapter(adapter);
-                binding.getViewModel().name.set(selectedProvince.getProvinceName());
-                Log.d(TAG + "BACK",Thread.currentThread().getId() + binding.getViewModel().name.get());
-            }
-        });
+        viewModel.visibilityBtn.setValue(View.INVISIBLE);
         mAreaApi.getProvince().enqueue(new Callback<ArrayList<Area>>() {
             @Override
             public void onResponse(Call<ArrayList<Area>> call, Response<ArrayList<Area>> response) {
@@ -156,34 +131,36 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                                         dataList.add(p.getProvinceName());
                                     }
                                     adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
-                                    listView.setAdapter(adapter);
-                                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                        @Override
-                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                            if (currentLevel == LEVEL_PROVINCE) {
-                                                selectedProvince = provinceList.get(position);
-                                                updateCityDatabase(selectedProvince);
-                                                currentLevel = LEVEL_CITY;
-                                                viewModel.name.set(selectedProvince.getProvinceName());
-                                                binding.backButton.setVisibility(View.VISIBLE);
-                                                return;
-                                            }
-                                            if (currentLevel == LEVEL_CITY) {
-                                                selectedCity = cityList.get(position);
-                                                updateCountryDatabase(selectedCity);
-                                                currentLevel = LEVEL_COUNTY;
-                                                viewModel.name.set(selectedCity.getCityName());
-                                                return;
-                                            }
-                                            if (currentLevel == LEVEL_COUNTY) {
-                                                County county = countyList.get(position);
-                                                WeatherAppManager.getInstance().getWeatherStatus().setWeatherId(county.getWeatherId());
-                                                WeatherAppManager.getInstance().getWeatherStatus().setName(county.getCountyName());
-                                                WeatherAppManager.getInstance().getWeatherStatus().setCityId(county.getCityId());
-                                                mainActivity.updateFragment(R.id.item_weather, new WeatherShowFragment(mainActivity));
-                                                return;
-                                            }
+                                    viewModel.adapter.setValue(adapter);
+                                    binding.listView.setVisibility(View.VISIBLE);
+                                    binding.progressBar.setVisibility(View.INVISIBLE);
+                                    listView.setOnItemClickListener((parent, view, position, id) -> {
+                                        if (currentLevel == LEVEL_PROVINCE) {
+                                            binding.listView.setVisibility(View.INVISIBLE);
+                                            binding.progressBar.setVisibility(View.VISIBLE);
+                                            selectedProvince = provinceList.get(position);
+                                            updateCityDatabase(selectedProvince);
+                                            currentLevel = LEVEL_CITY;
+                                            viewModel.name.setValue(selectedProvince.getProvinceName());
+                                            viewModel.visibilityBtn.setValue(View.VISIBLE);
+                                            return;
                                         }
+                                        if (currentLevel == LEVEL_CITY) {
+                                            binding.listView.setVisibility(View.INVISIBLE);
+                                            binding.progressBar.setVisibility(View.VISIBLE);
+                                            selectedCity = cityList.get(position);
+                                            updateCountryDatabase(selectedCity);
+                                            currentLevel = LEVEL_COUNTY;
+                                            viewModel.name.setValue(selectedCity.getCityName());
+                                            return;
+                                        }
+                                        if (currentLevel == LEVEL_COUNTY) {
+                                            County county = countyList.get(position);
+                                            WeatherAppManager.getInstance().getWeatherStatus().setWeatherId(county.getWeatherId());
+                                            WeatherAppManager.getInstance().getWeatherStatus().setName(county.getCountyName());
+                                            WeatherAppManager.getInstance().getWeatherStatus().setCityId(county.getCityId());
+                                            mainActivity.updateFragment(R.id.item_weather, mainActivity.weatherShowFragment);
+                                            return;}
                                     });
                                 },
                                 error -> Log.e(TAG, error + "")
@@ -210,23 +187,27 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                         }
                         provinceList = provinces;
                         adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
-                        listView.setAdapter(adapter);
-                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        viewModel.adapter.setValue(adapter);
+                        binding.listView.setVisibility(View.VISIBLE);
+                        binding.progressBar.setVisibility(View.INVISIBLE);
+                        listView.setOnItemClickListener((parent, view, position, id) -> {
                                 if (currentLevel == LEVEL_PROVINCE) {
+                                    binding.listView.setVisibility(View.INVISIBLE);
+                                    binding.progressBar.setVisibility(View.VISIBLE);
                                     selectedProvince = provinceList.get(position);
                                     updateCityDatabase(selectedProvince);
                                     currentLevel = LEVEL_CITY;
-                                    viewModel.name.set(selectedProvince.getProvinceName());
-                                    binding.backButton.setVisibility(View.VISIBLE);
+                                    viewModel.name.setValue(selectedProvince.getProvinceName());
+                                    viewModel.visibilityBtn.setValue(View.VISIBLE);
                                     return;
                                 }
                                 if (currentLevel == LEVEL_CITY) {
+                                    binding.listView.setVisibility(View.INVISIBLE);
+                                    binding.progressBar.setVisibility(View.VISIBLE);
                                     selectedCity = cityList.get(position);
                                     updateCountryDatabase(selectedCity);
                                     currentLevel = LEVEL_COUNTY;
-                                    viewModel.name.set(selectedCity.getCityName());
+                                    viewModel.name.setValue(selectedCity.getCityName());
                                     return;
                                 }
                                 if (currentLevel == LEVEL_COUNTY) {
@@ -234,10 +215,9 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                                     WeatherAppManager.getInstance().getWeatherStatus().setWeatherId(county.getWeatherId());
                                     WeatherAppManager.getInstance().getWeatherStatus().setName(county.getCountyName());
                                     WeatherAppManager.getInstance().getWeatherStatus().setCityId(county.getCityId());
-                                    mainActivity.updateFragment(R.id.item_weather, new WeatherShowFragment(mainActivity));
+                                    mainActivity.updateFragment();
                                     return;}
-                            }
-                        });
+                            });
                     }
                 }, error -> Log.e(TAG, error + ""));
     }
@@ -268,7 +248,9 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                                     dataList.add(c.getCityName());
                                 }
                                 adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
-                                listView.setAdapter(adapter);
+                                viewModel.adapter.setValue(adapter);
+                                binding.listView.setVisibility(View.VISIBLE);
+                                binding.progressBar.setVisibility(View.INVISIBLE);
                             }
                         });
             }
@@ -306,7 +288,9 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
                                     dataList.add(c.getCountyName());
                                 }
                                 adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
-                                listView.setAdapter(adapter);
+                                viewModel.adapter.setValue(adapter);
+                                binding.listView.setVisibility(View.VISIBLE);
+                                binding.progressBar.setVisibility(View.INVISIBLE);
                             }
                         });
             }
@@ -326,4 +310,37 @@ public class ChooseAreaFragment extends BaseFragment<FragmentChooseareaBinding, 
     protected int getLayoutId() {
         return R.layout.fragment_choosearea;
     }
+
+    public class ClickProxy{
+        public void search() {
+            if (currentLevel == 1) {
+                currentLevel = 0;
+                dataList.clear();
+                for (Province p : provinceList) {
+                    dataList.add(p.getProvinceName());
+                }
+                adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
+                viewModel.adapter.setValue(adapter);
+                binding.listView.setVisibility(View.VISIBLE);
+                binding.progressBar.setVisibility(View.INVISIBLE);
+                viewModel.visibilityBtn.setValue(View.INVISIBLE);
+                viewModel.name.setValue("中国");
+                Log.d(TAG + "BACK",Thread.currentThread().getId() + viewModel.name.getValue());
+            }
+            if (currentLevel == 2) {
+                currentLevel = 1;
+                dataList.clear();
+                for (City c : cityList) {
+                    dataList.add(c.getCityName());
+                }
+                adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
+                viewModel.adapter.setValue(adapter);
+                binding.listView.setVisibility(View.VISIBLE);
+                binding.progressBar.setVisibility(View.INVISIBLE);
+                viewModel.name.setValue(selectedProvince.getProvinceName());
+                Log.d(TAG + "BACK",Thread.currentThread().getId() + viewModel.name.getValue());
+            }
+        }
+    }
+
 }

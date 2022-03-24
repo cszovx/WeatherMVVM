@@ -40,6 +40,7 @@ public abstract class BaseFragment<B extends ViewDataBinding, VM extends BaseVie
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false);
         injectViewModel();
+        binding.setLifecycleOwner(this);
         init();
         return binding.getRoot();
     }
