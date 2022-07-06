@@ -15,7 +15,6 @@ import com.hryt.weathermvvm.models.weather.fragment.WeatherShowFragment;
 
 /**
  * author : SizheChen
- * e-mail : Sizhe_Chen@human-horizons.com
  * time   : 2022/03/08
  * desc   : This is MainActivity
  * version: 1.0
